@@ -1,9 +1,14 @@
 from django.urls import path
-from .views import PostDeleteAPIView, PostUpdateAPIView
 
-app_name = 'posts'
+from .views import PostListAPIView, PostCreateAPIView, PostDeleteUpdateAPIView, CommentCreateAPIView
+
+
+app_name = "posts"
 urlpatterns = [
-    path('posts/<int:pk>/', PostDeleteAPIView.as_view(), name='post_delete'),
-    path('posts/<int:pk>/', PostUpdateAPIView.as_view(), name='post_update'),
-
+    path("", PostListAPIView.as_view(), name="post_list"),
+    path("create/", PostCreateAPIView.as_view(), name="post_create"),
+    path('<int:pk>/', PostDeleteUpdateAPIView.as_view(), name='post_update'),
+    path('<int:pk>/comments/', CommentCreateAPIView.as_view(), name='comment_create'),
+    path('comments/<int:pk>/', CommentCreateAPIView.as_view(), name='comment_edit_delete'),
 ]
+
