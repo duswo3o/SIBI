@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .validators import validate_signup
+from .validators import validate_signup, validate_delete_account
 
 
 # Create your views here.
@@ -55,3 +55,4 @@ class UserSigninAPIView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+
