@@ -5,7 +5,6 @@ from .models import User
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
-        print("userserializer!!!!")
         model = User
         fields = (
             "id",
