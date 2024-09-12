@@ -80,6 +80,11 @@ TEMPLATES = [
 WSGI_APPLICATION = "SIBI_NEWS.wsgi.application"
 
 AUTH_USER_MODEL = "accounts.User"
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+}
 
 
 # Database
