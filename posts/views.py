@@ -1,4 +1,3 @@
-
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -26,6 +25,7 @@ class PostCreateAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class PostDeleteUpdateAPIView(APIView):
     # permission_classes = [IsAuthenticated]
 
@@ -40,7 +40,9 @@ class PostDeleteUpdateAPIView(APIView):
         # 게시글 삭제
         post.delete()
 
-        return Response({"detail": "게시글이 삭제되었습니다."}, status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"detail": "게시글이 삭제되었습니다."}, status=status.HTTP_204_NO_CONTENT
+        )
 
     def put(self, request, pk, format=None):
         post = get_object_or_404(Post, pk=pk)
@@ -74,4 +76,4 @@ class PostDeleteUpdateAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUES      
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
