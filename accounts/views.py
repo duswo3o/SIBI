@@ -30,6 +30,15 @@ class UserCreateAPIView(APIView):
             "refresh": str(refresh),
         }
         return Response(res_data, status=status.HTTP_200_OK)
+    
+    def delete(self, request): 
+        user = request.user 
+        is_valid, err_msg = validate_delete_account(request.data, user) 
+        if not is_valid: 
+            return Response({"error": err_msg}, status=status.HTTP_400_BAD_REQUEST) 
+        
+        user.delete() 
+        return Response({"message": "계정이 삭제되었습니다."}, status=status.HTTP_200_OK)
 
 
 class UserSigninAPIView(APIView):

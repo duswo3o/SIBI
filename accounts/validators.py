@@ -46,8 +46,8 @@ def validate_delete_account(request_data, user):
 
     if not password:
         return False, '비밀번호를 입력하세요.'
-    
+
     if not user.check_password(password):
         return False, '비밀번호가 일치하지 않습니다.'
-    
+
     return True, ''
