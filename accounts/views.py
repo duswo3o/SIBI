@@ -65,3 +65,17 @@ class UserSigninAPIView(APIView):
             status=status.HTTP_200_OK,
         )
 
+class UserSignoutAPIView(APIView):
+    def post(self, request):
+        refresh_token = request.data.get('refresh_token')
+        if not refresh_token:
+            return Response({'error': 'refresh token이 필요합니다.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+        except Exception as e:
+            return Response({'error': 'Invalid refresh token'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({'message': '로그아웃 되었습니다.'}, status=status.HTTP_200_OK)
+    
