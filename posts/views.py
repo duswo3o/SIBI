@@ -112,7 +112,8 @@ class CommentCreateAPIView(APIView):
             return Response({"detail": "권한이없습니다."}, status=status.HTTP_403_FORBIDDEN)
 
         comment.delete()
-        return Response({"message": "삭제 완료."}, status=200)
+        return Response({"messa"
+                         "ge": "삭제 완료."}, status=200)
 
 
 
