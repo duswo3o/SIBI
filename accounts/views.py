@@ -95,6 +95,22 @@ class ProfileDetailAPIView(APIView):
         serializer = ProfileSerializer(profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def put(self, request, username):
+        user = get_object_or_404(User, username=username)  # 조회한 프로필
+
+        if username != request.user.username:
+            return Response(
+                {"error": "수정 권한이 없는 프로필입니다."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        serializer = ProfileSerializer(instance=user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class PasswordResetAPIView(APIView):
     def put(self, request):
         user = request.user
