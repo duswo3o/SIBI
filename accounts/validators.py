@@ -39,3 +39,15 @@ def validate_signup(signup_data):
     except ValidationError:
         err_msg_list.append("이메일 형식이 올바르지 않습니다.")
     return not bool(err_msg_list), err_msg_list
+
+
+def validate_delete_account(request_data, user):
+    password = request_data.get('password')
+
+    if not password:
+        return False, '비밀번호를 입력하세요.'
+    
+    if not user.check_password(password):
+        return False, '비밀번호가 일치하지 않습니다.'
+    
+    return True, ''

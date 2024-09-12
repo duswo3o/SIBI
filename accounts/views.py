@@ -6,7 +6,7 @@ from .serializers import UserSerializer
 from rest_framework.response import Response
 from rest_framework import status
 
-from .validators import validate_signup
+from .validators import validate_signup, validate_delete_account
 
 
 # Create your views here.
@@ -21,3 +21,12 @@ class UserCreateAPIView(APIView):
         serializer = UserSerializer(user)
         print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def delete(self, request):
+        user = request.user
+
+        is_valid, err_msg = validate_delete_account(request.data, user)
+        if not is_valid:
+            return Response({"error": err_msg}, status=status.HTTP_400_BAD_REQUEST)
+        user.delete()
+        return Response({"message": "계정이 삭제되었습니다."}, status=status.HTTP_200_OK)
