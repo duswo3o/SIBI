@@ -1,15 +1,21 @@
 from django.db import models
 from accounts.models import User
 
+class Hashtag(models.Model):
+    name = models.CharField(max_length=10, unique=True)
+
+    def __str__(self):
+        return self.name
 
 class Post(models.Model):
     title = models.CharField(max_length=20)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-     # like_count = models.IntegerField()
+    # like_count = models.IntegerField()
     image = models.ImageField(upload_to="images/", blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+    hashtags = models.ManyToManyField(Hashtag, blank=True)
 
     def __str__(self):
         return self.title

@@ -3,7 +3,8 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Post, Comment
-from .serializers import PostSerializer, PostCreateSerializer, CommentSerializer
+from .serializers import PostSerializer, PostCreateSerializer, CommentSerializer, HashtagSerializer
+from .validators import validate_hashtags
 from django.shortcuts import get_object_or_404
 
 
@@ -21,11 +22,18 @@ class PostCreateAPIView(APIView):
     def post(self, request):
         permission_classes = [IsAuthenticated]
 
-        serializer = PostCreateSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        is_valid, valid_hashtags = validate_hashtags(request.data)
+        print(valid_hashtags)
+        if valid_hashtags:
+            hashtag_serializer = HashtagSerializer(data=valid_hashtags, many=True)
+            hashtag_serializer.is_valid(raise_exception=True)
+            hashtag_serializer.save()
+
+        post_serializer = PostCreateSerializer(data=request.data)
+        if post_serializer.is_valid(raise_exception=True):
+            post_serializer.save(author=request.user)
+
+        return Response(post_serializer.data, status=status.HTTP_201_CREATED)
 
 
 class PostDeleteUpdateAPIView(APIView):
