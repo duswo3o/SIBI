@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Post, Comment, Hashtag, Like
+from accounts.models import User
 
 
 class HashtagSerializer(serializers.ModelSerializer):
@@ -44,9 +45,10 @@ class PostCreateSerializer(serializers.ModelSerializer):
 
 class CommentLikeCountSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Comment
+        model = User
         fields = [
-            "like_users",
+            "id",
+            "username",
         ]
 
 
