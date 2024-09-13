@@ -3,10 +3,11 @@ from .models import Post, Comment, Like
 
 
 class PostSerializer(serializers.ModelSerializer):
+    like_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Post
-        fields = "__all__"
+        fields = ["id", "title", "content", "author", "created_at", "updated_at", "image", "like_count"]
 
 
 class PostCreateSerializer(serializers.ModelSerializer):
@@ -20,15 +21,6 @@ class PostCreateSerializer(serializers.ModelSerializer):
             "updated_at",
             "image",
         ]
-
-# class CommentSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Comment
-#         fields = [
-#             "id",
-#             "content",
-#             "created_at",
-#         ]
 
 
 class CommentSerializer(serializers.ModelSerializer):

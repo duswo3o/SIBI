@@ -1,4 +1,4 @@
-
+from django.db.models import Count
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
@@ -8,11 +8,10 @@ from .serializers import PostSerializer, PostCreateSerializer, CommentSerializer
 from django.shortcuts import get_object_or_404
 
 
-
 class PostListAPIView(APIView):
 
     def get(self, request):
-        posts = Post.objects.all()
+        posts = Post.objects.annotate(like_count=Count('likes')).order_by('-like_count')
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
 

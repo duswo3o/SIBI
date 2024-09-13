@@ -13,18 +13,14 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
-    @property
-    def like_count(self):
-        return self.likes.count()
-
 
 class Like(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')  # 게시글과의 관계
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  # 좋아요 누른 사용자
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('post', 'user')  # 한 사용자당 한 게시글에 한 번만 좋아요 가능
+        unique_together = ('post', 'user')
 
     def __str__(self):
         return f'{self.user.username} likes {self.post.title}'
@@ -32,7 +28,6 @@ class Like(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
-    # 게시물에 속한 댓글
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

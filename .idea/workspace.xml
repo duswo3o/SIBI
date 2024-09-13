@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ae5e61e7-54ec-430e-896c-ca93dce5ad04" name="Changes" comment="" />
+    <list default="true" id="ae5e61e7-54ec-430e-896c-ca93dce5ad04" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/c1384120-2a72-4f49-ba01-ce377499e9ac.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/c1384120-2a72-4f49-ba01-ce377499e9ac.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/posts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/posts/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/posts/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/posts/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/posts/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/posts/views.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -40,7 +47,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/posts/create&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/posts/post__like&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -67,7 +74,7 @@
       <option name="presentableId" value="Default" />
       <updated>1726054708355</updated>
       <workItem from="1726054710922" duration="1647000" />
-      <workItem from="1726102202528" duration="15712000" />
+      <workItem from="1726102202528" duration="27844000" />
     </task>
     <servers />
   </component>
