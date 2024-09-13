@@ -142,3 +142,28 @@ class PasswordResetAPIView(APIView):
             {"message": "비밀번호가 성공적으로 변경되었습니다."},
             status=status.HTTP_200_OK,
         )
+
+
+class ProfileFollowAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, username):
+        me = get_object_or_404(
+            User, username=request.user.username
+        )  # 현재 로그인된 사용지
+        you = get_object_or_404(User, username=username)
+
+        if me == you:
+            return Response(
+                {"follow": "나를 팔로우 할 수 없습니다"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if me in you.followers.all():
+            you.followers.remove(me)
+            return Response(
+                {"follow": "언팔로우 되었습니다"}, status=status.HTTP_200_OK
+            )
+        else:
+            you.followers.add(me)
+            return Response({"follow": "팔로우 되었습니다"}, status=status.HTTP_200_OK)

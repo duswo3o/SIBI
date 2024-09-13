@@ -25,4 +25,5 @@ class ProfileSerializer(serializers.ModelSerializer):
             "email",
             "gender",
             "birthday",
+            "followings",
         ]
