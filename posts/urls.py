@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import PostListAPIView, PostCreateAPIView, PostDeleteUpdateAPIView, CommentCreateAPIView, LikePostView
+from .views import PostListAPIView, PostDeleteUpdateAPIView, CommentCreateAPIView, LikePostView
 
 app_name = "posts"
 urlpatterns = [
