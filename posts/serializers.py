@@ -10,6 +10,8 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class PostCreateSerializer(serializers.ModelSerializer):
+    hashtags = serializers.PrimaryKeyRelatedField(queryset=Hashtag.objects.all(), many=True, required=False)
+
     class Meta:
         model = Post
         fields = [
@@ -26,6 +28,7 @@ class HashtagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hashtag
         fields = [
+            "id",
             "name",
         ]
 

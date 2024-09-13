@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Post, Comment
+from .models import Post, Comment, Hashtag
 from .serializers import PostSerializer, PostCreateSerializer, CommentSerializer, HashtagSerializer
 from .validators import validate_hashtags
 from django.shortcuts import get_object_or_404
@@ -23,15 +23,31 @@ class PostCreateAPIView(APIView):
         permission_classes = [IsAuthenticated]
 
         is_valid, valid_hashtags = validate_hashtags(request.data)
+
         print(valid_hashtags)
         if valid_hashtags:
-            hashtag_serializer = HashtagSerializer(data=valid_hashtags, many=True)
-            hashtag_serializer.is_valid(raise_exception=True)
-            hashtag_serializer.save()
+            hashtag_instances = []
+            for hashtag_name in valid_hashtags:
+                # get_or_create로 hashtag instance 가져오거나 새로 생성
+                hashtag, created = Hashtag.objects.get_or_create(name=hashtag_name)
+                hashtag_instances.append(hashtag)
+        else:
+            hashtag_instances = []
 
-        post_serializer = PostCreateSerializer(data=request.data)
+        # hashtag_serializer = HashtagSerializer(data=valid_hashtags, many=True)
+        # hashtag_serializer.is_valid(raise_exception=True)
+        # hashtag_serializer.save()
+
+        post_data = request.data.copy()
+        # post_data 딕셔너리의 hastags에 hashtag.id 포함시키기
+        post_data["hashtags"] = [hashtag.id for hashtag in hashtag_instances]
+        # 유효성 체크, Post 인스턴스를 저장하기 위해 Serializer로 변환
+        post_serializer = PostCreateSerializer(data=post_data)
+
         if post_serializer.is_valid(raise_exception=True):
-            post_serializer.save(author=request.user)
+            post = post_serializer.save(author=request.user)
+            # 생성된 Post 인스턴스를 serialize해서 Response 데이터를 만듦
+            post_serializer = PostCreateSerializer(post)
 
         return Response(post_serializer.data, status=status.HTTP_201_CREATED)
 
