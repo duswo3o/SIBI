@@ -10,5 +10,9 @@ class User(AbstractUser):
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
     birthday = models.DateField()
 
+    followings = models.ManyToManyField(
+        to="self", related_name="followers", symmetrical=False
+    )
+
     def __str__(self):
         return self.username
