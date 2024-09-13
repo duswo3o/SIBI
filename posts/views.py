@@ -3,8 +3,8 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Post, Comment
-from .serializers import PostSerializer, PostCreateSerializer, CommentSerializer
+from .models import Post, Comment, Like
+from .serializers import PostSerializer, PostCreateSerializer, CommentSerializer, LikeSerializer
 from django.shortcuts import get_object_or_404
 
 
@@ -24,7 +24,7 @@ class PostCreateAPIView(APIView):
 
         serializer = PostCreateSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            serializer.save(author=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -80,6 +80,7 @@ class PostDeleteUpdateAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class CommentCreateAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
@@ -106,8 +107,6 @@ class CommentCreateAPIView(APIView):
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
 
-
-
     def delete(self, request, pk):
         comment = get_object_or_404(Comment, pk=pk)
 
@@ -117,4 +116,28 @@ class CommentCreateAPIView(APIView):
         comment.delete()
         return Response({"messa"
                          "ge": "삭제 완료."}, status=200)
+
+
+class LikePostView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        serializer = LikeSerializer(data={'post': post.id, 'user': request.user.id})
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        like = Like.objects.filter(post=post, user=request.user).first()
+
+        if like:
+            like.delete()
+            return Response({'message': '좋아요가 취소되었습니다.'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'error': '좋아요를 누르지 않았습니다.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 

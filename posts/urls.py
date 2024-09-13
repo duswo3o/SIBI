@@ -1,7 +1,6 @@
 from django.urls import path
 
-from .views import PostListAPIView, PostCreateAPIView, PostDeleteUpdateAPIView, CommentCreateAPIView
-
+from .views import PostListAPIView, PostCreateAPIView, PostDeleteUpdateAPIView, CommentCreateAPIView, LikePostView
 
 app_name = "posts"
 urlpatterns = [
@@ -10,5 +9,6 @@ urlpatterns = [
     path('<int:pk>/', PostDeleteUpdateAPIView.as_view(), name='post_update'),
     path('<int:pk>/comments/', CommentCreateAPIView.as_view(), name='comment_create'),
     path('comments/<int:pk>/', CommentCreateAPIView.as_view(), name='comment_edit_delete'),
+    path('<int:pk>/like/', LikePostView.as_view(), name='post_like'),
 ]
 
