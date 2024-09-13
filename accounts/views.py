@@ -90,6 +90,7 @@ class UserSignoutAPIView(APIView):
         try:
             token = RefreshToken(refresh_token)
             token.blacklist()
+
         except Exception as e:
             return Response(
                 {"error": "Invalid refresh token"}, status=status.HTTP_400_BAD_REQUEST
