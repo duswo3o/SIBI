@@ -18,34 +18,34 @@ class PostListAPIView(APIView):
 
 
 class PostCreateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        permission_classes = [IsAuthenticated]
-
         is_valid, valid_hashtags = validate_hashtags(request.data)
-
         print(valid_hashtags)
+
+        hashtag_instances = []
         if valid_hashtags:
-            hashtag_instances = []
             for hashtag_name in valid_hashtags:
                 # get_or_create로 hashtag instance 가져오거나 새로 생성
                 hashtag, created = Hashtag.objects.get_or_create(name=hashtag_name)
                 hashtag_instances.append(hashtag)
-        else:
-            hashtag_instances = []
-
-        # hashtag_serializer = HashtagSerializer(data=valid_hashtags, many=True)
-        # hashtag_serializer.is_valid(raise_exception=True)
-        # hashtag_serializer.save()
 
         post_data = request.data.copy()
-        # post_data 딕셔너리의 hastags에 hashtag.id 포함시키기
-        post_data["hashtags"] = [hashtag.id for hashtag in hashtag_instances]
-        # 유효성 체크, Post 인스턴스를 저장하기 위해 Serializer로 변환
+        # Remove the 'hashtags'를 따로 처리하기 위해 post_data에서 빼기
+        post_data.pop("hashtags", None)
+
+        # DB 저장하지 말고 post instance 생성
         post_serializer = PostCreateSerializer(data=post_data)
 
         if post_serializer.is_valid(raise_exception=True):
+            # author 정하고 post instance 저장
             post = post_serializer.save(author=request.user)
+
+            # 만들어진 post에 hashtags를 더해주기
+            post.hashtags.set(hashtag_instances)
+            post.save()
+
             # 생성된 Post 인스턴스를 serialize해서 Response 데이터를 만듦
             post_serializer = PostCreateSerializer(post)
 

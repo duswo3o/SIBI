@@ -1,6 +1,12 @@
 from rest_framework import serializers
 from .models import Post, Comment, Hashtag
 
+class HashtagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hashtag
+        fields = [
+            "name"
+        ]
 
 class PostSerializer(serializers.ModelSerializer):
 
@@ -10,7 +16,8 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class PostCreateSerializer(serializers.ModelSerializer):
-    hashtags = serializers.PrimaryKeyRelatedField(queryset=Hashtag.objects.all(), many=True, required=False)
+    #hashtags = serializers.PrimaryKeyRelatedField(queryset=Hashtag.objects.all(), many=True, required=False)
+    hashtags = HashtagSerializer(many=True, read_only=True)
 
     class Meta:
         model = Post
@@ -24,13 +31,7 @@ class PostCreateSerializer(serializers.ModelSerializer):
             "hashtags",
         ]
 
-class HashtagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Hashtag
-        fields = [
-            "id",
-            "name",
-        ]
+
 
 # class CommentSerializer(serializers.ModelSerializer):
 #     class Meta:
