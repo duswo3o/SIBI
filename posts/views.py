@@ -1,4 +1,6 @@
 from django.db.models import Count
+from django.contrib.auth import get_user_model
+
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
@@ -179,3 +181,13 @@ class LikePostView(APIView):
         return Response(
             {"error": "좋아요를 누르지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST
         )
+
+    class CommentLikeAPIView(APIView):
+        def post(self, request, comment_pk):
+            comment = get_object_or_404(Comment, id=comment_pk)
+            user = get_user_model().objects.get(id=request.user.id)
+
+            if user in comment.like_users.all():
+                comment.like_users.delete(user)
+            else:
+                comment.like_users.add(user)
