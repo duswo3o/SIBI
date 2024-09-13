@@ -3,29 +3,59 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Post, Comment, Like
-from .serializers import PostSerializer, PostCreateSerializer, CommentSerializer, LikeSerializer
+
+from .models import Post, Comment, Hashtag, Like
+from .serializers import (
+    PostSerializer,
+    PostCreateSerializer,
+    CommentSerializer,
+    HashtagSerializer,
+    LikeSerializer,
+)
+from .validators import validate_hashtags
+
 from django.shortcuts import get_object_or_404
 
 
 class PostListAPIView(APIView):
 
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get(self, request):
-        posts = Post.objects.annotate(like_count=Count('likes')).order_by('-like_count')
+        posts = Post.objects.annotate(like_count=Count("likes")).order_by("-like_count")
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
 
-
-class PostCreateAPIView(APIView):
-
     def post(self, request):
-        permission_classes = [IsAuthenticated]
+        is_valid, valid_hashtags = validate_hashtags(request.data)
+        print(valid_hashtags)
 
-        serializer = PostCreateSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(author=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        hashtag_instances = []
+        if valid_hashtags:
+            for hashtag_name in valid_hashtags:
+                # get_or_create로 hashtag instance 가져오거나 새로 생성
+                hashtag, created = Hashtag.objects.get_or_create(name=hashtag_name)
+                hashtag_instances.append(hashtag)
+
+        post_data = request.data.copy()
+        # Remove the 'hashtags'를 따로 처리하기 위해 post_data에서 빼기
+        post_data.pop("hashtags", None)
+
+        # DB 저장하지 말고 post instance 생성
+        post_serializer = PostCreateSerializer(data=post_data)
+
+        if post_serializer.is_valid(raise_exception=True):
+            # author 정하고 post instance 저장
+            post = post_serializer.save(author=request.user)
+
+            # 만들어진 post에 hashtags를 더해주기
+            post.hashtags.set(hashtag_instances)
+            post.save()
+
+            # 생성된 Post 인스턴스를 serialize해서 Response 데이터를 만듦
+            post_serializer = PostCreateSerializer(post)
+
+        return Response(post_serializer.data, status=status.HTTP_201_CREATED)
 
 
 class PostDeleteUpdateAPIView(APIView):
@@ -37,7 +67,9 @@ class PostDeleteUpdateAPIView(APIView):
 
         # 요청자가 작성자인지 확인 추후 추가예정
         if post.author != request.user:
-            return Response({"detail": "삭제 권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "삭제 권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN
+            )
 
         # 게시글 삭제
         post.delete()
@@ -51,7 +83,9 @@ class PostDeleteUpdateAPIView(APIView):
 
         # 요청자가 작성자인지 확인
         if post.author != request.user:
-            return Response({"detail": "수정 권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "수정 권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN
+            )
 
         # 전체 데이터를 업데이트하는 시리얼라이저
         serializer = PostSerializer(post, data=request.data)
@@ -68,7 +102,9 @@ class PostDeleteUpdateAPIView(APIView):
 
         # 요청자가 작성자인지 확인
         if post.author != request.user:
-            return Response({"detail": "수정 권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "수정 권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN
+            )
 
         # 부분 데이터를 업데이트하는 시리얼라이저
         serializer = PostSerializer(post, data=request.data, partial=True)
@@ -84,7 +120,7 @@ class CommentCreateAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def post(self, request, pk):
-        post= get_object_or_404(Post, pk=pk)
+        post = get_object_or_404(Post, pk=pk)
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save(post=post, author=request.user)
@@ -110,11 +146,12 @@ class CommentCreateAPIView(APIView):
         comment = get_object_or_404(Comment, pk=pk)
 
         if comment.author != request.user:
-            return Response({"detail": "권한이없습니다."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "권한이없습니다."}, status=status.HTTP_403_FORBIDDEN
+            )
 
         comment.delete()
-        return Response({"messa"
-                         "ge": "삭제 완료."}, status=200)
+        return Response({"messa" "ge": "삭제 완료."}, status=200)
 
 
 class LikePostView(APIView):
@@ -122,7 +159,7 @@ class LikePostView(APIView):
 
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
-        serializer = LikeSerializer(data={'post': post.id, 'user': request.user.id})
+        serializer = LikeSerializer(data={"post": post.id, "user": request.user.id})
 
         if serializer.is_valid():
             serializer.save()
@@ -135,8 +172,10 @@ class LikePostView(APIView):
 
         if like:
             like.delete()
-            return Response({'message': '좋아요가 취소되었습니다.'}, status=status.HTTP_204_NO_CONTENT)
-        return Response({'error': '좋아요를 누르지 않았습니다.'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
+            return Response(
+                {"message": "좋아요가 취소되었습니다."},
+                status=status.HTTP_204_NO_CONTENT,
+            )
+        return Response(
+            {"error": "좋아요를 누르지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST
+        )

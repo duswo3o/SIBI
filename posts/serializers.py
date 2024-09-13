@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from .models import Post, Comment, Like
+from .models import Post, Comment, Hashtag, Like
+
+
+class HashtagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hashtag
+        fields = ["name"]
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -7,10 +13,22 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ["id", "title", "content", "author", "created_at", "updated_at", "image", "like_count"]
+        fields = [
+            "id",
+            "title",
+            "content",
+            "author",
+            "created_at",
+            "updated_at",
+            "image",
+            "like_count",
+        ]
 
 
 class PostCreateSerializer(serializers.ModelSerializer):
+    # hashtags = serializers.PrimaryKeyRelatedField(queryset=Hashtag.objects.all(), many=True, required=False)
+    hashtags = HashtagSerializer(many=True, read_only=True)
+
     class Meta:
         model = Post
         fields = [
@@ -20,6 +38,7 @@ class PostCreateSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "image",
+            "hashtags",
         ]
 
 
@@ -33,5 +52,5 @@ class CommentSerializer(serializers.ModelSerializer):
 class LikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Like
-        fields = ['id', 'post', 'user', 'created_at']
-        read_only_fields = ['id', 'created_at']
+        fields = ["id", "post", "user", "created_at"]
+        read_only_fields = ["id", "created_at"]
