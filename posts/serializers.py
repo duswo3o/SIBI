@@ -42,11 +42,32 @@ class PostCreateSerializer(serializers.ModelSerializer):
         ]
 
 
-class CommentSerializer(serializers.ModelSerializer):
+class CommentLikeCountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ["id", "author", "content", "created_at"]
-        read_only_fields = ["id", "author", "created_at"]
+        fields = [
+            "like_users",
+        ]
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    like_users = CommentLikeCountSerializer(many=True, read_only=True)
+    like_users_count = serializers.IntegerField(
+        source="like_users.count", read_only=True
+    )
+
+    class Meta:
+        model = Comment
+        fields = [
+            "id",
+            "author",
+            "content",
+            "created_at",
+            "like_users",
+            "like_users_count",
+        ]
+
+        read_only_fields = ("author",)
 
 
 class LikeSerializer(serializers.ModelSerializer):

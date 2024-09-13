@@ -136,11 +136,13 @@ class CommentCreateAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, pk):
-        comments = Comment.objects.all()
+        # comments = Comment.objects.all()
+        comments = Comment.objects.annotate(like_count=Count("like_users")).order_by(
+            "-like_count"
+        )
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
 
@@ -182,12 +184,15 @@ class LikePostView(APIView):
             {"error": "좋아요를 누르지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST
         )
 
-    class CommentLikeAPIView(APIView):
-        def post(self, request, comment_pk):
-            comment = get_object_or_404(Comment, id=comment_pk)
-            user = get_user_model().objects.get(id=request.user.id)
 
-            if user in comment.like_users.all():
-                comment.like_users.delete(user)
-            else:
-                comment.like_users.add(user)
+class CommentLikeAPIView(APIView):
+    def post(self, request, comment_pk):
+        comment = get_object_or_404(Comment, id=comment_pk)
+        user = get_user_model().objects.get(id=request.user.id)
+
+        if user in comment.like_users.all():
+            comment.like_users.remove(user)
+            return Response({"comment": "해당 댓글에 좋아요가 취소되었습니다"})
+        else:
+            comment.like_users.add(user)
+            return Response({"comment": "해당 댓글에 좋아요 하셨습니다"})

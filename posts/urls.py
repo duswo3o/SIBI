@@ -16,5 +16,5 @@ urlpatterns = [
         "comments/<int:pk>/", CommentCreateAPIView.as_view(), name="comment_edit_delete"
     ),
     path("<int:pk>/like/", LikePostView.as_view(), name="post_like"),
-    path("<int:comment_pk>/like", CommentLikeAPIView.as_view()),
+    path("comment/<int:comment_pk>/like/", CommentLikeAPIView.as_view()),
 ]
