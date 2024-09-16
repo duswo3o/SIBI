@@ -11,7 +11,7 @@ class User(AbstractUser):
     birthday = models.DateField()
 
     followings = models.ManyToManyField(
-        to="self", related_name="followers", symmetrical=False
+        to="self", related_name="followers", symmetrical=False, blank=True
     )
 
     def __str__(self):
