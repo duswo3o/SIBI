@@ -1,5 +1,6 @@
 from django.db.models import Count
 from django.contrib.auth import get_user_model
+from django.core.validators import URLValidator
 
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
@@ -13,10 +14,14 @@ from .serializers import (
     CommentSerializer,
     HashtagSerializer,
     LikeSerializer,
+    CrawlingSerializer,
 )
 from .validators import validate_hashtags
+from .crawling import get_content
 
 from django.shortcuts import get_object_or_404
+
+import requests
 
 
 class PostListAPIView(APIView):
@@ -196,3 +201,23 @@ class CommentLikeAPIView(APIView):
         else:
             comment.like_users.add(user)
             return Response({"comment": "해당 댓글에 좋아요 하셨습니다"})
+
+
+class CrawlingAPIView(APIView):
+    def post(self, request):
+        url = request.data.get("url")
+        print("2222222222222222")
+        print(url)
+        web_site = requests.get(url)
+        print("2222222222222222")
+
+        if web_site.status_code != 200:
+            return Response("찾을 수 없는 url 입니다.")
+
+        content = get_content(url)
+
+        serializer = CrawlingSerializer(data={"url": url, "content": content})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

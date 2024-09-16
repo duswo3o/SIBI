@@ -46,3 +46,8 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.content
+
+
+class UrlContent(models.Model):
+    url = models.URLField()
+    content = models.TextField()
