@@ -18,6 +18,7 @@ from .serializers import (
 )
 from .validators import validate_hashtags
 from .crawling import get_content
+from openai_test import summery_article
 
 from django.shortcuts import get_object_or_404
 
@@ -206,17 +207,20 @@ class CommentLikeAPIView(APIView):
 class CrawlingAPIView(APIView):
     def post(self, request):
         url = request.data.get("url")
-        print("2222222222222222")
-        print(url)
+        # print("2222222222222222")
+        # print(url)
         web_site = requests.get(url)
-        print("2222222222222222")
+        # print("2222222222222222")
 
         if web_site.status_code != 200:
             return Response("찾을 수 없는 url 입니다.")
 
         content = get_content(url)
+        summery_content = summery_article(content)
 
-        serializer = CrawlingSerializer(data={"url": url, "content": content})
+        serializer = CrawlingSerializer(
+            data={"url": url, "content": content, "summery": summery_content}
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

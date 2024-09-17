@@ -61,7 +61,7 @@ def get_content(url):
             content += temp
             content += "\n"
 
-    print(content)
+    # print(content)
     driver.close()
 
     return content

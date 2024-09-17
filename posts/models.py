@@ -51,3 +51,4 @@ class Comment(models.Model):
 class UrlContent(models.Model):
     url = models.URLField()
     content = models.TextField()
+    summery = models.TextField()
