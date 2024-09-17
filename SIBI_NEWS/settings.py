@@ -14,6 +14,7 @@ from pathlib import Path
 from datetime import timedelta
 
 import allauth
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,8 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-v*w4!25-hr6$3^5#e%f7aqyndd5b!=2q2lpp!-0g7v*qa!h4)0"
-OPENAI_API_KEY =
+SECRET_KEY = os.environ.get("SECRET_KEY")
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
