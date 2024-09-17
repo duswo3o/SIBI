@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Post, Comment, Hashtag, Like
+from .models import Post, Comment, Hashtag, Like, UrlContent
 from .serializers import (
     PostSerializer,
     PostCreateSerializer,
@@ -217,6 +217,8 @@ class CrawlingAPIView(APIView):
 
         content = get_content(url)
         summery_content = summery_article(content)
+
+        UrlContent.objects.create(url=url, content=content, summery=summery_content)
 
         serializer = CrawlingSerializer(
             data={"url": url, "content": content, "summery": summery_content}
