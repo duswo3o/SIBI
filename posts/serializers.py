@@ -36,6 +36,8 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ["id", "author", "content", "created_at", "like_count"]
         read_only_fields = ["id", "author", "created_at"]
 
+class DataSerializer(serializers.Serializer):
+    data = serializers.ListField(child=serializers.CharField())
 
 
 

@@ -1,4 +1,5 @@
-
+import openai
+import os
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
@@ -6,9 +7,12 @@ from rest_framework.views import APIView
 from .models import Post, Comment
 from .serializers import PostSerializer, PostCreateSerializer, CommentSerializer , CommentLikeSerializer
 from django.shortcuts import get_object_or_404
-from django.db.models import Count
+from django.contrib.sites import requests
+from .crawler import fetch_article_content
+from .openai import summarize_text
+from SIBI_NEWS.config import OPENAI_API_KEY
 
-
+openai.api_key = OPENAI_API_KEY
 
 class PostListAPIView(APIView):
 
@@ -137,42 +141,25 @@ class CommentLikeAPIView(APIView):
             return Response({"detail": "좋아요를 추가했습니다."}, status=status.HTTP_200_OK)
 
 
+class FetchAndSummarizeNewsView(APIView):
+    def get(self, request, *args, **kwargs):
+        url = request.query_params.get('url')  # URL을 쿼리 파라미터로 받기
 
+        if not url:
+            return Response({"error": "URL parameter is required."}, status=status.HTTP_400_BAD_REQUEST)
 
+        try:
+            # URL을 통해 콘텐츠 크롤링
+            title, news_content = fetch_article_content(url)
+            summary = summarize_text(news_content)
 
+            return Response({
+                'title': title,
+                'summary': summary,
+                'link': url
+            }, status=status.HTTP_200_OK)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# class CommentListAPIView(APIView):
-#     permission_classes = [IsAuthenticatedOrReadOnly]
-
-    # def get(self, request, pk=None):
-    #     comments = Comment.objects.annotate(like_count=Count('likes')).order_by('-like_count')
-    #
-    #     serializer = CommentLikeSerializer(comments, many=True)
-    #     return Response(serializer.data)
-
-    # get_404 말고
-
-
-
-
-
-
-
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
