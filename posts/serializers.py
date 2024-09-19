@@ -24,10 +24,10 @@ class PostSerializer(serializers.ModelSerializer):
             "image",
             "like_count",
         ]
+        read_only_fields = ("author",)
 
 
 class PostCreateSerializer(serializers.ModelSerializer):
-    # hashtags = serializers.PrimaryKeyRelatedField(queryset=Hashtag.objects.all(), many=True, required=False)
     hashtags = HashtagSerializer(many=True, read_only=True)
 
     class Meta:
