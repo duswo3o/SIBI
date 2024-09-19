@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Post, Comment, Hashtag, Like, UrlContent
+from .models import Post, Comment, Hashtag, Like, UrlContent, Headline
 from .serializers import (
     PostSerializer,
     PostCreateSerializer,
@@ -240,3 +240,10 @@ class CrawlingAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TodayHeadlineAPIView(APIView):
+    def get(self, request):
+        headline_articles = Headline.objects.all().order_by("-id")[:5]
+        serializer = CrawlingSerializer(headline_articles, many=True)
+        return Response(serializer.data)
