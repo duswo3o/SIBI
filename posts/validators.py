@@ -10,8 +10,6 @@ def validate_hashtags(request_data):
     else:
         hashtags = []
 
-    print(hashtags)
-
     valid_hashtags = []
 
     for tag in hashtags:
