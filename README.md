@@ -164,4 +164,4 @@ IT 뉴스링크와 관련 글을 올릴 수 있는 뉴스 서비스입니다.
 
 ## Trouble Shooting
 
-- [SIBI_news 트러블 슈팅]([https://www.notion.so/teamsparta/8f9ba157cb8646d7a90c0d1827347c28?v=6d56ff1742c641789351681daa5daf0b&pvs=4](https://www.notion.so/teamsparta/4054f98bac9645ca90071a3a353c9a77?pvs=4))
+- [SIBI_news 트러블 슈팅]([https://www.notion.so/teamsparta/8f9ba157cb8646d7a90c0d1827347c28?v=6d56ff1742c641789351681daa5daf0b&pvs=4](https://www.notion.so/teamsparta/4054f98bac9645ca90071a3a353c9a77?pvs=4)
