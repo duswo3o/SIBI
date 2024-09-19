@@ -7,15 +7,15 @@
 Sparta News
 
 ## 📖 Table of Contents
-1. [About the Project](#About the Project)
-2. [About Our Team](#About Our Team)
-3. [Main Features](#Main Features)
-4. [Development Period](#Development Period)
-5. [Built With](#Built With)
+1. [About the Project](#About-the-Project)
+2. [About Our Team](#About-Our-Team)
+3. [Main Features](#Main-Features)
+4. [Development Period](#Development-Period)
+5. [Built With](#Built-With)
 6. [Wireframe](#Wireframe)
 7. [API Specification](#API-Specification)
 8. [ERD](#ERD)
-9. [Porject Folder Structure](#Project Folder Structure)
+9. [Porject Folder Structure](#Project-Folder-Structure)
 10. [Trouble Shooting](#trouble-shooting)
     
 ## 👨‍🏫 About the Project
