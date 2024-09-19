@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, Comment, Hashtag, Like
+from .models import Post, Comment, Hashtag, Like, UrlContent
 from accounts.models import User
 
 
@@ -77,3 +77,12 @@ class LikeSerializer(serializers.ModelSerializer):
         model = Like
         fields = ["id", "post", "user", "created_at"]
         read_only_fields = ["id", "created_at"]
+
+
+class CrawlingSerializer(serializers.Serializer):
+    url = serializers.URLField()
+    title = serializers.CharField()
+    summery = serializers.CharField()
+
+    def create(self, validated_data):
+        return UrlContent(**validated_data)

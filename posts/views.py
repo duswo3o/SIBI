@@ -1,3 +1,4 @@
+import openai
 from django.db.models import Count
 from django.contrib.auth import get_user_model
 
@@ -6,17 +7,26 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Post, Comment, Hashtag, Like
+from .models import Post, Comment, Hashtag, Like, UrlContent
 from .serializers import (
     PostSerializer,
     PostCreateSerializer,
     CommentSerializer,
     HashtagSerializer,
     LikeSerializer,
+    CrawlingSerializer,
 )
 from .validators import validate_hashtags
+from .crawling import get_content
+from openai_test import summery_article
 
 from django.shortcuts import get_object_or_404
+from django.contrib.sites import requests
+
+from SIBI_NEWS.config import OPENAI_API_KEY
+import requests
+
+openai.api_key = OPENAI_API_KEY
 
 
 class PostListAPIView(APIView):
@@ -155,7 +165,7 @@ class CommentCreateAPIView(APIView):
             )
 
         comment.delete()
-        return Response({"messa" "ge": "삭제 완료."}, status=200)
+        return Response({"message": "삭제 완료."}, status=200)
 
 
 class LikePostView(APIView):
@@ -196,3 +206,37 @@ class CommentLikeAPIView(APIView):
         else:
             comment.like_users.add(user)
             return Response({"comment": "해당 댓글에 좋아요 하셨습니다"})
+
+
+class CrawlingAPIView(APIView):
+    def post(self, request):
+        url = request.data.get("url")
+        web_site = requests.get(url)
+
+        if web_site.status_code != 200:
+            return Response("찾을 수 없는 url 입니다.")
+
+        crawling = get_content(url)
+        title = crawling[0]
+        content = crawling[1]
+        summery_content = summery_article(content)
+
+        # 데이터베이스에 이미 있는 url이라면 저장하지 않기
+        if not UrlContent.objects.filter(url=url):
+            UrlContent.objects.create(
+                url=url,
+                title=title,
+                summery=summery_content,
+            )
+
+        serializer = CrawlingSerializer(
+            data={
+                "url": url,
+                "title": title,
+                "summery": summery_content,
+            }
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -1,4 +1,5 @@
 from django.urls import path
+from . import views
 from .views import (
     PostListAPIView,
     PostDeleteUpdateAPIView,
@@ -17,5 +18,5 @@ urlpatterns = [
     ),
     path("<int:pk>/like/", LikePostView.as_view(), name="post_like"),
     path("comment/<int:comment_pk>/like/", CommentLikeAPIView.as_view()),
+    path("crawling/", views.CrawlingAPIView.as_view()),
 ]
-

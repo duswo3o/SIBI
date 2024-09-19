@@ -11,7 +11,7 @@ class Hashtag(models.Model):
 
 class Post(models.Model):
     title = models.CharField(max_length=20)
-    content = models.TextField(null=True, blank=True)
+    content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to="images/", blank=True)
@@ -46,3 +46,9 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.content
+
+
+class UrlContent(models.Model):
+    url = models.URLField()
+    title = models.TextField()
+    summery = models.TextField()
