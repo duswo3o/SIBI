@@ -81,7 +81,7 @@ class LikeSerializer(serializers.ModelSerializer):
 
 class CrawlingSerializer(serializers.Serializer):
     url = serializers.URLField()
-    content = serializers.CharField()
+    title = serializers.CharField()
     summery = serializers.CharField()
 
     def create(self, validated_data):

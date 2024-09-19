@@ -26,10 +26,11 @@ from django.shortcuts import get_object_or_404
 from django.contrib.sites import requests
 from .crawler import fetch_article_content
 from .openai import summarize_text
-from SIBI_NEWS.config import OPENAI_API_KEY
+
+# from SIBI_NEWS.config import OPENAI_API_KEY
 import requests
 
-openai.api_key = OPENAI_API_KEY
+# openai.api_key = OPENAI_API_KEY
 
 
 class PostListAPIView(APIView):
@@ -211,46 +212,31 @@ class CommentLikeAPIView(APIView):
             return Response({"comment": "해당 댓글에 좋아요 하셨습니다"})
 
 
-class FetchAndSummarizeNewsView(APIView):
-    def get(self, request, *args, **kwargs):
-        url = request.query_params.get('url')  # URL을 쿼리 파라미터로 받기
-
-        if not url:
-            return Response({"error": "URL parameter is required."}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            # URL을 통해 콘텐츠 크롤링
-            title, news_content = fetch_article_content(url)
-            summary = summarize_text(news_content)
-
-            return Response({
-                'title': title,
-                'summary': summary,
-                'link': url
-            }, status=status.HTTP_200_OK)
-
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 class CrawlingAPIView(APIView):
     def post(self, request):
         url = request.data.get("url")
-        # print("2222222222222222")
-        # print(url)
         web_site = requests.get(url)
-        # print("2222222222222222")
 
         if web_site.status_code != 200:
             return Response("찾을 수 없는 url 입니다.")
 
-        content = get_content(url)
+        crawling = get_content(url)
+        title = crawling[0]
+        content = crawling[1]
         summery_content = summery_article(content)
 
-        UrlContent.objects.create(url=url, content=content, summery=summery_content)
+        UrlContent.objects.create(
+            url=url,
+            title=title,
+            summery=summery_content,
+        )
 
         serializer = CrawlingSerializer(
-            data={"url": url, "content": content, "summery": summery_content}
+            data={
+                "url": url,
+                "title": title,
+                "summery": summery_content,
+            }
         )
         if serializer.is_valid():
             serializer.save()
