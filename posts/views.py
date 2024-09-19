@@ -50,7 +50,7 @@ class PostListAPIView(APIView):
                 hashtag_instances.append(hashtag)
 
         post_data = request.data.copy()
-        # Remove the 'hashtags'를 따로 처리하기 위해 post_data에서 빼기
+        #'hashtags'를 따로 처리하기 위해 post_data에서 빼기
         post_data.pop("hashtags", None)
 
         # DB 저장하지 말고 post instance 생성
