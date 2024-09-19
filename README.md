@@ -31,7 +31,7 @@ Sparta News is a news service that allows you to post links of the latest IT new
 - Feature 1: User features
   - Username, password, email, first_name, last_name, and brithday are required to sign up
   - Registered members can write, edit, and delete posts
-  - Registered members can write, modify, and delete comments on posts
+  - Registered members can write, edit, and delete comments on posts
   - Registered members can like posts and comments
   - Registered members can follow other registered members
 
