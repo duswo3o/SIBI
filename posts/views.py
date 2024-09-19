@@ -73,6 +73,11 @@ class PostListAPIView(APIView):
 class PostDeleteUpdateAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+    def get(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
+
     def delete(self, request, pk):
         # pk로 게시글 가져오기
         post = get_object_or_404(Post, pk=pk)
