@@ -1,8 +1,6 @@
 import openai
-import os
 from django.db.models import Count
 from django.contrib.auth import get_user_model
-from django.core.validators import URLValidator
 
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
@@ -24,13 +22,11 @@ from openai_test import summery_article
 
 from django.shortcuts import get_object_or_404
 from django.contrib.sites import requests
-from .crawler import fetch_article_content
-from .openai import summarize_text
 
-# from SIBI_NEWS.config import OPENAI_API_KEY
+from SIBI_NEWS.config import OPENAI_API_KEY
 import requests
 
-# openai.api_key = OPENAI_API_KEY
+openai.api_key = OPENAI_API_KEY
 
 
 class PostListAPIView(APIView):
@@ -225,11 +221,13 @@ class CrawlingAPIView(APIView):
         content = crawling[1]
         summery_content = summery_article(content)
 
-        UrlContent.objects.create(
-            url=url,
-            title=title,
-            summery=summery_content,
-        )
+        # 데이터베이스에 이미 있는 url이라면 저장하지 않기
+        if not UrlContent.objects.filter(url=url):
+            UrlContent.objects.create(
+                url=url,
+                title=title,
+                summery=summery_content,
+            )
 
         serializer = CrawlingSerializer(
             data={

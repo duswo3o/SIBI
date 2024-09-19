@@ -6,7 +6,6 @@ from .views import (
     CommentCreateAPIView,
     LikePostView,
     CommentLikeAPIView,
-    FetchAndSummarizeNewsView
 )
 
 app_name = "posts"
@@ -20,6 +19,4 @@ urlpatterns = [
     path("<int:pk>/like/", LikePostView.as_view(), name="post_like"),
     path("comment/<int:comment_pk>/like/", CommentLikeAPIView.as_view()),
     path("crawling/", views.CrawlingAPIView.as_view()),
-    path('crawl/', FetchAndSummarizeNewsView.as_view(), name='crawl_view'),
 ]
-

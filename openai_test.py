@@ -1,11 +1,8 @@
 from openai import OpenAI
+from SIBI_NEWS.config import OPENAI_API_KEY
 
-from dotenv import load_dotenv
-import os
 
-load_dotenv()
-
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+client = OpenAI(api_key=OPENAI_API_KEY)
 
 
 def summery_article(article):
@@ -29,5 +26,3 @@ def summery_article(article):
         max_tokens=500,
     )
     return completion.choices[0].message.content
-
-    # print(completion.choices[0].message)
