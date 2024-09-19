@@ -53,7 +53,7 @@ Sparta News is a news service that allows you to post links of the latest IT new
 
 
 ## ⏲️ Development Period
-- 2024.09.11(수) ~ 2024.09.19(목)
+- 2024.09.11(Wed) ~ 2024.09.19(Thu)
 
 ## 📚️ Built With
 
