@@ -40,7 +40,6 @@ class PostListAPIView(APIView):
 
     def post(self, request):
         is_valid, valid_hashtags = validate_hashtags(request.data)
-        print(valid_hashtags)
 
         hashtag_instances = []
         if valid_hashtags:
@@ -154,7 +153,6 @@ class CommentCreateAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, pk):
-        # comments = Comment.objects.all()
         comments = Comment.objects.annotate(like_count=Count("like_users")).order_by(
             "-like_count"
         )
