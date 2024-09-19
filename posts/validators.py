@@ -3,7 +3,13 @@ from .models import Hashtag
 
 
 def validate_hashtags(request_data):
-    hashtags = request_data.get("hashtags").split(" ")
+    hashtags = request_data.get("hashtags")
+
+    if hashtags:
+        hashtags = hashtags.split(" ")
+    else:
+        hashtags = []
+
     print(hashtags)
 
     valid_hashtags = []
