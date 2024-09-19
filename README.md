@@ -84,6 +84,7 @@ IT 뉴스링크와 관련 글을 올릴 수 있는 뉴스 서비스입니다.
 
 ## ERD
 
+![img](readme-img/spartanews_erd.png)
 
 ## 프로젝트 파일 구조
 
