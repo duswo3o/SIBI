@@ -19,4 +19,5 @@ urlpatterns = [
     path("<int:pk>/like/", LikePostView.as_view(), name="post_like"),
     path("comment/<int:comment_pk>/like/", CommentLikeAPIView.as_view()),
     path("crawling/", views.CrawlingAPIView.as_view()),
+    path("headline/", views.TodayHeadlineAPIView.as_view()),
 ]
